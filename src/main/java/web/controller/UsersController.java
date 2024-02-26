@@ -63,11 +63,8 @@ public class UsersController {
     }
 
     @PostMapping("/change")
-    public String changeUser(@RequestParam("id") int id,
-                             @RequestParam("firstName") String firstName,
-                             @RequestParam("lastName") String lastName,
-                             @RequestParam("email") String email) {
-        userService.change(id, firstName, lastName, email);
+    public String changeUser(@ModelAttribute("user") User user) {
+        userService.change(user);
         return "redirect:/users";
     }
 

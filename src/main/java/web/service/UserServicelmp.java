@@ -32,8 +32,8 @@ public class UserServicelmp implements UserService {
 
     @Transactional
     @Override
-    public void change(long id, String firstName, String lastName, String email) {
-        userDao.change(id,firstName,lastName,email);
+    public void change(User user) {
+        userDao.change(user);
     }
 
     @Transactional(readOnly = true)

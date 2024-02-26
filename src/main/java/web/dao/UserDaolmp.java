@@ -28,14 +28,12 @@ public class UserDaolmp implements UserDao {
     }
 
     @Override
-    public void change(long id, String firstName, String lastName, String email) {
-        User user = entityManager.find(User.class, id);
-        if (user != null) {
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setEmail(email);
-            entityManager.merge(user);
-        }
+    public void change(User user) {
+        User user1 = entityManager.find(User.class, user.getId());
+        user1.setFirstName(user.getFirstName());
+        user1.setLastName(user.getLastName());
+        user1.setEmail(user.getEmail());
+        entityManager.merge(user1);
     }
 
     @Override
