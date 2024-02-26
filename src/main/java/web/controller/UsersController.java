@@ -40,6 +40,11 @@ public class UsersController {
     }
 
     @GetMapping("/delete")
+    public String getDeleteForm(){
+        return "delete";
+    }
+
+    @PostMapping("/del")
     public String delete(@RequestParam("id") Long userId) {
         userService.delete(userId);
         return "redirect:/users";
@@ -63,7 +68,7 @@ public class UsersController {
                              @RequestParam("lastName") String lastName,
                              @RequestParam("email") String email) {
         userService.change(id, firstName, lastName, email);
-        return "redirect:/users"; // Перенаправляем на страницу с пользователями после изменения данных
+        return "redirect:/users";
     }
 
 }

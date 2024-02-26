@@ -11,102 +11,45 @@ import java.util.Optional;
 @Repository
 public class UserDaolmp implements UserDao {
 
-    private final EntityManagerFactory entityManagerFactory;
-
-    @Autowired
-    public UserDaolmp(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void add(User user) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
-
-        try {
-            entityTransaction.begin();
-            entityManager.persist(user);
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction.isActive()) {
-                entityTransaction.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
+        entityManager.persist(user);
     }
 
     @Override
     public void delete(Long id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         User user = entityManager.find(User.class, id);
-
         if (user != null) {
-            EntityTransaction entityTransaction = entityManager.getTransaction();
-            try {
-                entityTransaction.begin();
-                entityManager.remove(user);
-                entityTransaction.commit();
-            } catch (Exception e) {
-                if (entityTransaction.isActive()) {
-                    entityTransaction.rollback();
-                }
-                e.printStackTrace();
-            } finally {
-                entityManager.close();
-            }
+            entityManager.remove(user);
         }
     }
 
     @Override
     public void change(long id, String firstName, String lastName, String email) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         User user = entityManager.find(User.class, id);
-
         if (user != null) {
-            EntityTransaction transaction = entityManager.getTransaction();
-
-            try {
-                transaction.begin();
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                user.setEmail(email);
-                entityManager.merge(user);
-                transaction.commit();
-            } catch (Exception e) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-            } finally {
-                entityManager.close();
-            }
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            entityManager.merge(user);
         }
     }
-
 
     @Override
     public List<User> listUsers() {
         String jpql = "SELECT u FROM User u";
-        TypedQuery<User> query = entityManagerFactory.createEntityManager().createQuery(jpql, User.class);
-        return query.getResultList();
+        return entityManager.createQuery(jpql, User.class).getResultList();
     }
+
     @Override
     public Optional<User> findUserById(Long id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            String jpql = "SELECT u FROM User u WHERE u.id = :id";
-            TypedQuery<User> query = entityManager.createQuery(jpql, User.class);
-            query.setParameter("id", id);
-
-            User result = query.getSingleResult();
-            return Optional.ofNullable(result);
-        } catch (NoResultException e) {
-            return Optional.empty();
-        } finally {
-            entityManager.close();
-        }
+        String jpql = "SELECT u FROM User u WHERE u.id = :id";
+        User user = entityManager.createQuery(jpql, User.class)
+                .setParameter("id", id)
+                .getSingleResult();
+        return Optional.ofNullable(user);
     }
 }

@@ -9,11 +9,12 @@
 <div>
   <th:block th:each="user : ${users}">
     <h1 th:text="${user}"></h1>
-    <a th:href="@{/users/delete(id=${user.id})}" onclick="return confirm('Are you sure you want to delete the user with ID ' + ${user.id} + '?')">Delete User</a>
     <a th:href="@{users/change(id=${user.id})}" class="btn btn-primary">Change User</a>
   </th:block>
   <br/>
   <a href="/users/add">Add User</a>
+  <br/>
+  <a href="/users/delete">Delete User</a>
 </div>
 </body>
 </html>
